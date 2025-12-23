@@ -279,9 +279,6 @@ export default function App() {
 
               {animationDone && !showDashboard && (
                 <>
-                  <div style={{ position: 'fixed', top: 0, left: 0, right: 0, height: 10, background: 'blue', zIndex: 99999 }}>
-                    DEBUG: HOME PAGE (Dashboard=FALSE)
-                  </div>
                   <Navbar
                     onLogin={() => setShowLogin(true)}
                     onSignup={() => setShowSignup(true)}
@@ -302,9 +299,6 @@ export default function App() {
 
               {showDashboard && (
                 <>
-                  <div style={{ position: 'fixed', top: 0, left: 0, right: 0, height: 10, background: 'red', zIndex: 99999 }}>
-                    DEBUG: DASHBOARD IS ACTIVE
-                  </div>
                   <Navbar
                     onLogin={() => setShowLogin(true)}
                     onSignup={() => setShowSignup(true)}
