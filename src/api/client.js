@@ -1,6 +1,11 @@
 const ENV_URL = import.meta.env.VITE_API_URL || '';
-// Ensure BASE_URL never has trailing slash or /api
-const BASE_URL = ENV_URL ? ENV_URL.replace(/\/$/, '').replace(/\/api$/, '') : '';
+// In development, we usually want to use the local proxy (''), 
+// unless VITE_API_URL is explicitly set and we DON'T want to use the proxy.
+// If VITE_API_URL is pointing to a remote server, we use it directly IF we aren't using the vite proxy.
+// BUT, if we want the local dev experience to be smooth, we prefer the proxy.
+const BASE_URL = (import.meta.env.DEV && ENV_URL && !ENV_URL.includes('localhost') && !ENV_URL.includes('127.0.0.1'))
+  ? '' // Use proxy in dev if pointing to a remote API
+  : (ENV_URL ? ENV_URL.replace(/\/$/, '').replace(/\/api$/, '') : '');
 
 console.log('API Client Initialized v2 (Fixed Double API)'); // Debug to ensure new code is running
 
@@ -31,6 +36,11 @@ export async function api(path, options = {}) {
   normalizedPath = normalizedPath.replace(/^\/api\/api\//, '/api/');
 
   const requestUrl = `${BASE_URL}${normalizedPath}`;
+
+  // Only log in development to avoid console noise in production
+  if (import.meta.env.DEV) {
+    console.log(`[API Request] ${options.method || 'GET'} ${requestUrl}`);
+  }
 
   let res;
   try {

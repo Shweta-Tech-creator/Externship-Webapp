@@ -2,7 +2,9 @@ import axios from 'axios'
 
 // Fix: Robust URL construction
 const ENV_URL = import.meta.env.VITE_API_URL || 'https://externship-api.onrender.com';
-const BASE_URL = ENV_URL.replace(/\/$/, '').replace(/\/api$/, '');
+const BASE_URL = (import.meta.env.DEV && ENV_URL.includes('onrender.com'))
+  ? ''
+  : ENV_URL.replace(/\/$/, '').replace(/\/api$/, '');
 
 const api = axios.create({
   baseURL: `${BASE_URL}/api`,

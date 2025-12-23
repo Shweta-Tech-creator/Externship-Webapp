@@ -5,9 +5,7 @@ import { listProjects, createProject, deleteProject, listCertificates, uploadCer
 import { fetchMe, updatePassword } from "../api/auth";
 import { api } from "../api/client";
 
-// Base for admin/backend APIs. Default to "/api" 
-const adminApiBase = import.meta.env.VITE_ADMIN_API_URL || "/api";
-
+// Note: adminApiBase defined in earlier iterations is no longer needed as we use the centralized api() client.
 const Dashboard = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
@@ -34,6 +32,7 @@ const Dashboard = () => {
 
   const [internships, setInternships] = useState([]);
   const [loadingInternships, setLoadingInternships] = useState(true);
+  const [internshipsError, setInternshipsError] = useState(null);
   const [selectedInternship, setSelectedInternship] = useState(null);
   const [filters, setFilters] = useState({
     workMode: new Set(),
@@ -190,6 +189,10 @@ const Dashboard = () => {
     }
     return true;
   });
+
+  if (view === 'internship' && internships.length > 0 && filteredInternships.length === 0) {
+    console.log('Internships filtered out to zero. Check filters:', filters);
+  }
 
   function handleApply(internship) {
     if (!currentUser) {
@@ -377,72 +380,78 @@ const Dashboard = () => {
     return () => { mounted = false };
   }, []);
 
-  useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      try {
-        setLoadingInternships(true);
-        // so newly published admin internships appear here.
-        const data = await api(`/api/internship/public`);
+  const fetchInternships = useCallback(async () => {
+    try {
+      setInternshipsError(null);
+      setLoadingInternships(true);
+      console.log('Fetching internships from /api/internship/public...');
+      const data = await api(`/api/internship/public`);
 
-        if (!Array.isArray(data)) {
-          if (!cancelled) setInternships([]);
-          return;
-        }
-
-        const mapped = data.map((raw) => {
-          const durationStr = raw.duration || "";
-          const months = parseInt(durationStr, 10) || 0;
-
-          return {
-            id: raw._id || String(raw.id || ""),
-            title: raw.title || raw.role || "Internship",
-            company: raw.company || "Admin Internship",
-            workMode: raw.workMode || "Remote",
-            durationLabel: durationStr || "Duration not specified",
-            durationMin: months || 0,
-            durationMax: months || 0,
-            experience: typeof raw.experience === "number" ? raw.experience : 0,
-            paid: Boolean(raw.paid),
-            open: true,
-            languages: Array.isArray(raw.techStack) ? raw.techStack : [],
-            stack: Array.isArray(raw.techStack) ? raw.techStack : [],
-            tools: Array.isArray(raw.tools) ? raw.tools : [],
-            tags: Array.isArray(raw.benefits) ? raw.benefits : [],
-            requiresAssessment: false,
-            description: raw.description || raw.title || "",
-            project: raw.project || "",
-            stipend: raw.stipend || "",
-            // openings removed from UI; keep here only if needed elsewhere
-            openings: typeof raw.openings === "number" ? raw.openings : undefined,
-            location: raw.location || "",
-            internshipType: raw.internshipType || "",
-            // deadline removed from UI; keep value if needed for logic
-            deadline: raw.deadline || "",
-            skillsRequired: Array.isArray(raw.skillsRequired) ? raw.skillsRequired : [],
-          };
-        }).filter(internship => {
-          // Only filter out grey FSD and Java Developer internships
-          const title = internship.title.toLowerCase();
-          return !(title.includes('grey') &&
-            (title.includes('full stack developer') ||
-              title.includes('fsd') ||
-              title.includes('java developer')));
-        });
-
-        if (!cancelled) {
-          setInternships(mapped);
-          setLoadingInternships(false);
-        }
-      } catch (e) {
-        if (cancelled) return;
+      if (!Array.isArray(data)) {
+        console.warn('Fetched internships data is not an array:', data);
+        setInternships([]);
         setLoadingInternships(false);
-        // Fallback: keep existing internships (if any) on error
-        console.error("Failed to fetch internships", e?.message || e);
+        return;
       }
-    })();
-    return () => { cancelled = true; };
+
+      const mapped = data.map((raw) => {
+        const durationStr = raw.duration || "";
+        const months = parseInt(durationStr, 10) || 0;
+
+        return {
+          id: raw._id || String(raw.id || ""),
+          title: raw.title || raw.role || "Internship",
+          company: raw.company || "Admin Internship",
+          workMode: raw.workMode || "Remote",
+          durationLabel: durationStr || "Duration not specified",
+          durationMin: months || 0,
+          durationMax: months || 0,
+          experience: typeof raw.experience === "number" ? raw.experience : 0,
+          paid: Boolean(raw.paid),
+          open: true,
+          languages: Array.isArray(raw.techStack) ? raw.techStack : [],
+          stack: Array.isArray(raw.techStack) ? raw.techStack : [],
+          tools: Array.isArray(raw.tools) ? raw.tools : [],
+          tags: Array.isArray(raw.benefits) ? raw.benefits : [],
+          requiresAssessment: false,
+          description: raw.description || raw.title || "",
+          project: raw.project || "",
+          stipend: raw.stipend || "",
+          openings: typeof raw.openings === "number" ? raw.openings : undefined,
+          location: raw.location || "",
+          internshipType: raw.internshipType || "",
+          deadline: raw.deadline || "",
+          skillsRequired: Array.isArray(raw.skillsRequired) ? raw.skillsRequired : [],
+        };
+      }).filter(internship => {
+        const title = internship.title.toLowerCase();
+        return !(title.includes('grey') &&
+          (title.includes('full stack developer') ||
+            title.includes('fsd') ||
+            title.includes('java developer')));
+      });
+
+      console.log(`Internships fetched successfully: ${data.length}, Mapped: ${mapped.length}`);
+      setInternships(mapped);
+      setLoadingInternships(false);
+    } catch (e) {
+      console.error('Failed to fetch internships:', e);
+      setLoadingInternships(false);
+      const errorMsg = e.message || 'Failed to load internships. Please check if the backend is running.';
+      setInternshipsError(errorMsg);
+    }
   }, []);
+
+  useEffect(() => {
+    fetchInternships();
+  }, [fetchInternships]);
+
+  useEffect(() => {
+    if (view === 'internship' && internships.length === 0 && !loadingInternships && !internshipsError) {
+      console.log('Internship view active but no internships, retrying fetch...');
+      fetchInternships();
+    }
+  }, [view, internships.length, loadingInternships, internshipsError, fetchInternships]);
 
   useEffect(() => {
     if (!currentUser) {
@@ -1375,7 +1384,7 @@ const Dashboard = () => {
               <h1 className="hero-title">Your Career Starts Here – Explore 100+ Internships</h1>
               <p className="hero-sub">Get access to real-world, expert‑verified opportunities across top companies and startups. Build hands‑on experience, grow with mentor feedback, and craft a portfolio that opens doors to your next step.</p>
               <div className="hero-actions">
-                <button className="apply-btn large">Browse Internships</button>
+                <button className="apply-btn large" onClick={() => document.getElementById('internship-grid-anchor')?.scrollIntoView({ behavior: 'smooth' })}>Browse Internships</button>
               </div>
             </div>
             <div className="hero-right" aria-hidden="true">
@@ -1439,13 +1448,23 @@ const Dashboard = () => {
             </div>
           </div>
 
+          <div id="internship-grid-anchor" style={{ height: 1 }} />
           <div className="internships-grid">
             {loadingInternships ? (
               <p className="muted">Loading internships...</p>
+            ) : internshipsError ? (
+              <div style={{ padding: '20px', background: '#fee2e2', border: '1px solid #fecaca', borderRadius: '8px', color: '#b91c1c' }}>
+                <p><strong>Error:</strong> {internshipsError}</p>
+                <button
+                  onClick={() => window.location.reload()}
+                  style={{ marginTop: '10px', padding: '6px 12px', background: '#dc2626', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+                >
+                  Retry
+                </button>
+              </div>
             ) : filteredInternships.length > 0 ? (
               filteredInternships.map((i) => (
                 <div key={i.id} className="intern-card">
-                  {/* ... same card content ... */}
                   <div className="card-top">
                     <div className="titles">
                       <div className="role">{i.title}</div>
@@ -1537,7 +1556,15 @@ const Dashboard = () => {
                 </div>
               ))
             ) : (
-              <p className="muted">No internships match the filters.</p>
+              <div style={{ textAlign: 'center', padding: '40px' }}>
+                <p className="muted">No internships match the filters.</p>
+                <button
+                  onClick={() => fetchInternships()}
+                  style={{ marginTop: '10px', padding: '8px 16px', background: '#3b82f6', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer' }}
+                >
+                  Refresh List
+                </button>
+              </div>
             )}
           </div>
 
