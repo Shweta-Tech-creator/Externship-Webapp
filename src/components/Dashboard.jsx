@@ -33,6 +33,7 @@ const Dashboard = () => {
   const [projSuccess, setProjSuccess] = useState(false);
 
   const [internships, setInternships] = useState([]);
+  const [loadingInternships, setLoadingInternships] = useState(true);
   const [selectedInternship, setSelectedInternship] = useState(null);
   const [filters, setFilters] = useState({
     workMode: new Set(),
@@ -380,10 +381,14 @@ const Dashboard = () => {
     let cancelled = false;
     (async () => {
       try {
+        setLoadingInternships(true);
         // so newly published admin internships appear here.
         const data = await api(`/api/internship/public`);
 
-        if (!Array.isArray(data)) return;
+        if (!Array.isArray(data)) {
+          if (!cancelled) setInternships([]);
+          return;
+        }
 
         const mapped = data.map((raw) => {
           const durationStr = raw.duration || "";
@@ -425,9 +430,13 @@ const Dashboard = () => {
               title.includes('java developer')));
         });
 
-        if (!cancelled) setInternships(mapped);
+        if (!cancelled) {
+          setInternships(mapped);
+          setLoadingInternships(false);
+        }
       } catch (e) {
         if (cancelled) return;
+        setLoadingInternships(false);
         // Fallback: keep existing internships (if any) on error
         console.error("Failed to fetch internships", e?.message || e);
       }
@@ -1431,105 +1440,103 @@ const Dashboard = () => {
           </div>
 
           <div className="internships-grid">
-            {filteredInternships.map((i) => (
-              <div key={i.id} className="intern-card">
-                <div className="card-top">
-                  <div className="titles">
-                    <div className="role">{i.title}</div>
-                    <div className="company">
-                      {i.company === "Admin Internship" ? "" : i.company}
-                    </div>
-                  </div>
-                  <button className="fav-btn" onClick={() => toggleFavorite(i)} aria-label="Favorite">
-                    {favorites.has(i.id) ? '❤️' : '♡'}
-                  </button>
-                </div>
-                {/* Meta line: duration • work mode • experience */}
-                <div className="meta-row">
-                  <span className="pill">{i.durationLabel}</span>
-                  <span className="pill">{i.workMode}</span>
-                  {i.experience > 0 && (
-                    <span className="pill">{i.experience}+ years exp</span>
-                  )}
-                </div>
-
-                <div className="card-body">
-                  {/* Tech Stack and Tools & Technologies directly under meta */}
-                  {(Array.isArray(i.stack) && i.stack.length > 0) || (Array.isArray(i.tools) && i.tools.length > 0) ? (
-                    <div className="tech-tools-container">
-                      {/* Tech Stack */}
-                      {Array.isArray(i.stack) && i.stack.length > 0 && (
-                        <div className="tech-section">
-                          <div style={{ fontSize: '12px', fontWeight: '600', color: '#374151', marginBottom: '6px' }}>
-                            💻 Tech Stack:
-                          </div>
-                          <div className="chips">
-                            {i.stack.slice(0, 3).map((s) => (
-                              <span key={s} className="chip primary">{s}</span>
-                            ))}
-                            {i.stack.length > 3 && (
-                              <span className="chip primary">+{i.stack.length - 3}</span>
-                            )}
-                          </div>
-                        </div>
-                      )}
-
-                      {/* Tools & Technologies */}
-                      {Array.isArray(i.tools) && i.tools.length > 0 && (
-                        <div className="tools-section">
-                          <div style={{ fontSize: '12px', fontWeight: '600', color: '#374151', marginBottom: '6px' }}>
-                            🛠️ Tools & Technologies:
-                          </div>
-                          <div className="chips">
-                            {i.tools.slice(0, 3).map((t) => (
-                              <span key={t} className="chip" style={{ background: '#e0e7ff', color: '#3730a3' }}>{t}</span>
-                            ))}
-                            {i.tools.length > 3 && (
-                              <span className="chip" style={{ background: '#e0e7ff', color: '#3730a3' }}>+{i.tools.length - 3}</span>
-                            )}
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  ) : null}
-
-                  {/* Stipend / location / type row, kept compact below tech/tools */}
-                  <div className="card-info">
-                    {i.stipend && (<span className="pill warn">💰 {i.stipend}</span>)}
-                    {i.location && (<span className="pill">📍 {i.location}</span>)}
-                    {i.internshipType && (<span className="pill">🏢 {i.internshipType}</span>)}
-                  </div>
-
-                  {/* Skills Required (optional, at bottom to avoid empty look) */}
-                  {Array.isArray(i.skillsRequired) && i.skillsRequired.length > 0 && (
-                    <div className="skills-section" style={{ marginTop: '12px' }}>
-                      <div style={{ fontSize: '12px', fontWeight: '600', color: '#374151', marginBottom: '6px' }}>
-                        🎯 Skills Required:
+            {loadingInternships ? (
+              <p className="muted">Loading internships...</p>
+            ) : filteredInternships.length > 0 ? (
+              filteredInternships.map((i) => (
+                <div key={i.id} className="intern-card">
+                  {/* ... same card content ... */}
+                  <div className="card-top">
+                    <div className="titles">
+                      <div className="role">{i.title}</div>
+                      <div className="company">
+                        {i.company === "Admin Internship" ? "" : i.company}
                       </div>
-                      <div className="chips">
-                        {i.skillsRequired.slice(0, 4).map((s) => (
-                          <span key={s} className="chip">{s}</span>
-                        ))}
-                        {i.skillsRequired.length > 4 && (
-                          <span className="chip">+{i.skillsRequired.length - 4} more</span>
+                    </div>
+                    <button className="fav-btn" onClick={() => toggleFavorite(i)} aria-label="Favorite">
+                      {favorites.has(i.id) ? '❤️' : '♡'}
+                    </button>
+                  </div>
+                  <div className="meta-row">
+                    <span className="pill">{i.durationLabel}</span>
+                    <span className="pill">{i.workMode}</span>
+                    {i.experience > 0 && (
+                      <span className="pill">{i.experience}+ years exp</span>
+                    )}
+                  </div>
+
+                  <div className="card-body">
+                    {(Array.isArray(i.stack) && i.stack.length > 0) || (Array.isArray(i.tools) && i.tools.length > 0) ? (
+                      <div className="tech-tools-container">
+                        {Array.isArray(i.stack) && i.stack.length > 0 && (
+                          <div className="tech-section">
+                            <div style={{ fontSize: '12px', fontWeight: '600', color: '#374151', marginBottom: '6px' }}>
+                              💻 Tech Stack:
+                            </div>
+                            <div className="chips">
+                              {i.stack.slice(0, 3).map((s) => (
+                                <span key={s} className="chip primary">{s}</span>
+                              ))}
+                              {i.stack.length > 3 && (
+                                <span className="chip primary">+{i.stack.length - 3}</span>
+                              )}
+                            </div>
+                          </div>
+                        )}
+
+                        {Array.isArray(i.tools) && i.tools.length > 0 && (
+                          <div className="tools-section">
+                            <div style={{ fontSize: '12px', fontWeight: '600', color: '#374151', marginBottom: '6px' }}>
+                              🛠️ Tools & Technologies:
+                            </div>
+                            <div className="chips">
+                              {i.tools.slice(0, 3).map((t) => (
+                                <span key={t} className="chip" style={{ background: '#e0e7ff', color: '#3730a3' }}>{t}</span>
+                              ))}
+                              {i.tools.length > 3 && (
+                                <span className="chip" style={{ background: '#e0e7ff', color: '#3730a3' }}>+{i.tools.length - 3}</span>
+                              )}
+                            </div>
+                          </div>
                         )}
                       </div>
+                    ) : null}
+
+                    <div className="card-info">
+                      {i.stipend && (<span className="pill warn">💰 {i.stipend}</span>)}
+                      {i.location && (<span className="pill">📍 {i.location}</span>)}
+                      {i.internshipType && (<span className="pill">🏢 {i.internshipType}</span>)}
                     </div>
-                  )}
+
+                    {Array.isArray(i.skillsRequired) && i.skillsRequired.length > 0 && (
+                      <div className="skills-section" style={{ marginTop: '12px' }}>
+                        <div style={{ fontSize: '12px', fontWeight: '600', color: '#374151', marginBottom: '6px' }}>
+                          🎯 Skills Required:
+                        </div>
+                        <div className="chips">
+                          {i.skillsRequired.slice(0, 4).map((s) => (
+                            <span key={s} className="chip">{s}</span>
+                          ))}
+                          {i.skillsRequired.length > 4 && (
+                            <span className="chip">+{i.skillsRequired.length - 4} more</span>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                  <div className="card-foot">
+                    <button className="btn-link" onClick={() => setSelectedInternship(i)}>View details</button>
+                    <button
+                      className={`apply-btn large block ${myApplications.length > 0 ? 'disabled' : ''}`}
+                      onClick={() => setSelectedInternship(i)}
+                      disabled={myApplications.length > 0}
+                    >
+                      {myApplications.length > 0 ? 'Already Applied' : 'Apply Now'}
+                    </button>
+                  </div>
                 </div>
-                <div className="card-foot">
-                  <button className="btn-link" onClick={() => setSelectedInternship(i)}>View details</button>
-                  <button
-                    className={`apply-btn large block ${myApplications.length > 0 ? 'disabled' : ''}`}
-                    onClick={() => setSelectedInternship(i)}
-                    disabled={myApplications.length > 0}
-                  >
-                    {myApplications.length > 0 ? 'Already Applied' : 'Apply Now'}
-                  </button>
-                </div>
-              </div>
-            ))}
-            {filteredInternships.length === 0 && (
+              ))
+            ) : (
               <p className="muted">No internships match the filters.</p>
             )}
           </div>

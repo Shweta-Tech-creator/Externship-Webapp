@@ -1,6 +1,6 @@
-const ENV_URL = import.meta.env.VITE_API_URL || 'https://externship-api.onrender.com';
+const ENV_URL = import.meta.env.VITE_API_URL || '';
 // Ensure BASE_URL never has trailing slash or /api
-const BASE_URL = ENV_URL.replace(/\/$/, '').replace(/\/api$/, '');
+const BASE_URL = ENV_URL ? ENV_URL.replace(/\/$/, '').replace(/\/api$/, '') : '';
 
 console.log('API Client Initialized v2 (Fixed Double API)'); // Debug to ensure new code is running
 
