@@ -84,7 +84,7 @@ const Dashboard = () => {
       appliedAt: new Date().toISOString()
     };
 
-    const data = await api(`/application`, {
+    const data = await api(`/api/application`, {
       method: "POST",
       body: JSON.stringify(payload),
     });
@@ -234,7 +234,7 @@ const Dashboard = () => {
       // Also save to backend for persistence
       const studentId = currentUser?.id || currentUser?._id;
       if (studentId) {
-        api(`/student/${studentId}/favorites`, {
+        api(`/api/student/${studentId}/favorites`, {
           method: 'POST',
           body: JSON.stringify({ internshipId: i.id, action: isAdding ? 'add' : 'remove' })
         }).catch(err => console.error('Failed to sync favorites to backend:', err));
@@ -248,7 +248,7 @@ const Dashboard = () => {
     const studentId = studentIdParam || currentUser?.id || currentUser?._id;
     if (!studentId) return;
     try {
-      const data = await api(`/application/student/${studentId}`);
+      const data = await api(`/api/application/student/${studentId}`);
       // Ensure we only keep the most recent application if multiple exist
       const uniqueApps = [];
       const seen = new Set();
@@ -269,7 +269,7 @@ const Dashboard = () => {
     const studentId = studentIdParam || currentUser?.id || currentUser?._id;
     if (!studentId) return;
     try {
-      const data = await api(`/student/${studentId}/favorites`);
+      const data = await api(`/api/student/${studentId}/favorites`);
       const favoriteIds = Array.isArray(data) ? data.map(fav => fav.internshipId || fav.internship?._id) : [];
       setFavorites(new Set(favoriteIds));
       // Update localStorage with backend data
@@ -380,9 +380,8 @@ const Dashboard = () => {
     let cancelled = false;
     (async () => {
       try {
-        // Use the same backend (via Vite /api proxy) for public internships
         // so newly published admin internships appear here.
-        const data = await api(`/internship/public`);
+        const data = await api(`/api/internship/public`);
 
         if (!Array.isArray(data)) return;
 

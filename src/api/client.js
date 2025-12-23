@@ -21,9 +21,16 @@ export async function api(path, options = {}) {
   if (!isFormData && !headers.has('Content-Type')) headers.set('Content-Type', 'application/json');
 
   // Fix: Robust URL construction
-  // BASE_URL is guaranteed to NOT end within /api
-  // path is expected to start with /api
-  const requestUrl = `${BASE_URL}${path}`;
+  // Ensure path starts with /api if it doesn't already
+  let normalizedPath = path;
+  if (!normalizedPath.startsWith('/api/') && normalizedPath !== '/api') {
+    normalizedPath = normalizedPath.startsWith('/') ? `/api${normalizedPath}` : `/api/${normalizedPath}`;
+  }
+
+  // Handle accidental double /api/api
+  normalizedPath = normalizedPath.replace(/^\/api\/api\//, '/api/');
+
+  const requestUrl = `${BASE_URL}${normalizedPath}`;
 
   let res;
   try {
