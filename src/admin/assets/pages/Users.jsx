@@ -82,6 +82,7 @@ const Users = ({ darkMode }) => {
         mobile: response.data.mobile || user.mobile || 'N/A',
         certificates: response.data.certificates || [],
         projects: response.data.projects || [],
+        applications: response.data.applications || [],
         internshipStatus: response.data.internshipStatus || 'Not Applied'
       });
       setProfileModalOpen(true);
@@ -96,6 +97,7 @@ const Users = ({ darkMode }) => {
         mobile: user.mobile || 'N/A',
         certificates: user.certificates || [],
         projects: user.projects || [],
+        applications: user.applications || [],
         internshipStatus: user.internshipStatus || 'Not Applied'
       });
       setProfileModalOpen(true);
@@ -461,6 +463,92 @@ const Users = ({ darkMode }) => {
                     fontWeight: 600,
                   }}
                 />
+              </Box>
+
+              {/* Internship Applications */}
+              <Box sx={{ mb: 4 }}>
+                <Typography variant="h6" fontWeight={600} color={darkMode ? '#fff' : '#0A1A2F'} mb={2}>
+                  Internship Applications ({Array.isArray(selectedUser.applications) ? selectedUser.applications.length : 0})
+                </Typography>
+                {Array.isArray(selectedUser.applications) && selectedUser.applications.length > 0 ? (
+                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                    {selectedUser.applications.map((app, index) => (
+                      <Box
+                        key={index}
+                        sx={{
+                          p: 2,
+                          background: darkMode ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.02)',
+                          borderRadius: 2,
+                          border: `1px solid ${darkMode ? '#2a2a3e' : '#e0e7ff'}`,
+                        }}
+                      >
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
+                          <Box>
+                            <Typography variant="subtitle1" fontWeight={600} color={darkMode ? '#fff' : '#0A1A2F'}>
+                              {app.internshipTitle}
+                            </Typography>
+                            <Typography variant="body2" color="text.secondary">
+                              {app.company}
+                            </Typography>
+                          </Box>
+                          <Chip
+                            label={app.status}
+                            size="small"
+                            sx={{
+                              background:
+                                (app.status === 'Approved') ? 'rgba(16, 185, 129, 0.15)' :
+                                  (app.status === 'Rejected') ? 'rgba(239, 68, 68, 0.15)' :
+                                    'rgba(251, 191, 36, 0.15)',
+                              color:
+                                (app.status === 'Approved') ? (darkMode ? '#34d399' : '#059669') :
+                                  (app.status === 'Rejected') ? (darkMode ? '#f87171' : '#dc2626') :
+                                    (darkMode ? '#fbbf24' : '#d97706'),
+                              fontWeight: 600,
+                            }}
+                          />
+                        </Box>
+                        <Box sx={{ mt: 1, display: 'flex', gap: 2, flexWrap: 'wrap' }}>
+                          {app.githubUrl && (
+                            <Typography
+                              variant="body2"
+                              component="a"
+                              href={app.githubUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              sx={{ color: darkMode ? '#60a5fa' : '#1e40af', textDecoration: 'none' }}
+                            >
+                              GitHub →
+                            </Typography>
+                          )}
+                          {app.liveUrl && (
+                            <Typography
+                              variant="body2"
+                              component="a"
+                              href={app.liveUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              sx={{ color: darkMode ? '#60a5fa' : '#1e40af', textDecoration: 'none' }}
+                            >
+                              Live Demo →
+                            </Typography>
+                          )}
+                        </Box>
+                        {app.feedback && (
+                          <Typography variant="body2" color="text.secondary" sx={{ mt: 1, fontStyle: 'italic' }}>
+                            Feedback: {app.feedback}
+                          </Typography>
+                        )}
+                        <Typography variant="caption" color="text.secondary" sx={{ mt: 1, display: 'block' }}>
+                          Applied: {new Date(app.appliedAt).toLocaleDateString()}
+                        </Typography>
+                      </Box>
+                    ))}
+                  </Box>
+                ) : (
+                  <Typography variant="body2" color="text.secondary">
+                    No applications submitted
+                  </Typography>
+                )}
               </Box>
 
               {/* Projects */}
