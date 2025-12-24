@@ -2889,109 +2889,165 @@
 /* STUDENT DASHBOARD MOBILE IMPROVEMENTS */
 @media (max-width: 768px) {
   .dashboard-container {
-    padding: 0 12px 24px !important;
-    overflow-x: hidden;
+    padding: 0 16px 40px !important;
+    overflow-x: hidden !important;
+    position: relative !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
   }
+
+  /* Backdrop effect when menu is open */
+  .dashboard-container::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(4px);
+    z-index: 998;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+
+  /* Target container's backdrop when sidebar has 'open' class */
+  /* Since we can't easily target parents in CSS without :has, we use a global approach or adjust sidebar logic */
+  /* Instead, we'll make the sidebar full height and high-z-index */
 
   .dashboard-container .dashboard-title {
     font-size: 24px !important;
-    margin-top: 30px !important;
-    margin-bottom: 24px !important;
+    margin-top: 24px !important;
+    margin-bottom: 20px !important;
+    padding: 0 10px !important;
   }
 
-  /* Welcome Banner */
+  /* Welcome Banner - Fix the "Welcome, sweta" being cut off */
   .dashboard-container .welcome-banner {
-    padding: 20px 16px !important;
-    margin-top: 20px !important;
-    text-align: center;
+    padding: 24px 20px !important;
+    margin-top: 16px !important;
+    text-align: center !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+  }
+
+  .dashboard-container .welcome-text {
+    width: 100% !important;
   }
 
   .dashboard-container .welcome-text h1 {
     font-size: 22px !important;
+    margin-bottom: 8px !important;
   }
 
   /* Quick Stats */
   .dashboard-container .quick-stats {
     grid-template-columns: 1fr 1fr !important;
     gap: 12px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
   }
 
   .dashboard-container .quick-stats .stat-card {
-    padding: 14px 10px !important;
-    text-align: center;
-  }
-
-  .dashboard-container .quick-stats .stat-value {
-    font-size: 22px !important;
-  }
-
-  .dashboard-container .quick-stats .stat-label {
-    font-size: 13px !important;
+    padding: 16px 12px !important;
+    min-height: 90px !important;
   }
 
   /* Profile Card */
   .dashboard-container .profile-card {
-    padding: 24px 16px !important;
-    gap: 24px !important;
-    flex-direction: column !important;
-    align-items: center !important;
-    text-align: center !important;
+    padding: 28px 20px !important;
+    margin: 20px 0 !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
   }
 
   .dashboard-container .profile-avatar {
-    width: 100px !important;
-    height: 100px !important;
+    width: 110px !important;
+    height: 110px !important;
   }
 
-  .dashboard-container .profile-info {
+  /* SIDEBAR FIXES (Overlay Style) */
+  .dashboard-container .collapsible-nav {
+    position: fixed !important;
+    left: -280px !important;
+    top: 0 !important;
+    width: 250px !important;
+    height: 100% !important;
+    z-index: 2000 !important;
+    /* Above everything */
+    background: #0a1931 !important;
+    /* Solid dark navy */
+    box-shadow: none !important;
+    transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  }
+
+  .dashboard-container .collapsible-nav.open {
+    left: 0 !important;
+    box-shadow: 10px 0 30px rgba(0, 0, 0, 0.3) !important;
+  }
+
+  /* Sidebar Links Visibility */
+  .dashboard-container .collapsible-nav ul {
+    margin-top: 60px !important;
+    padding: 0 16px !important;
+  }
+
+  .dashboard-container .collapsible-nav ul li {
+    margin: 16px 0 !important;
+  }
+
+  .dashboard-container .collapsible-nav ul li button {
+    background: rgba(255, 255, 255, 0.1) !important;
+    color: #ffffff !important;
+    /* Force white text */
+    padding: 14px 16px !important;
+    font-size: 15px !important;
+    font-weight: 600 !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    display: block !important;
     width: 100% !important;
+    text-align: left !important;
   }
 
-  .dashboard-container .profile-form {
-    grid-template-columns: 1fr !important;
-    gap: 16px !important;
+  .dashboard-container .collapsible-nav ul li button.active {
+    background: #3b82f6 !important;
+    border-color: #3b82f6 !important;
+    color: #fff !important;
   }
 
-  .dashboard-container .profile-form .form-actions {
+  /* Toggle Button Position */
+  .dashboard-container .nav-toggle-btn {
+    position: fixed !important;
+    bottom: 24px !important;
+    left: 20px !important;
+    z-index: 1001 !important;
+    background: #0a1931 !important;
+    color: #fff !important;
+    border: 2px solid #3b82f6 !important;
+    width: 48px !important;
+    height: 48px !important;
+    display: flex !important;
+    align-items: center !important;
     justify-content: center !important;
+    border-radius: 50% !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
   }
 
-  /* Assignment Status Section */
+  /* Assignment Status */
   .dashboard-container .assignment-status {
+    width: 100% !important;
     padding: 24px 16px !important;
-    margin-top: 40px !important;
+    box-sizing: border-box !important;
+    margin-top: 32px !important;
   }
 
   .dashboard-container .status-grid {
     grid-template-columns: 1fr 1fr !important;
-    gap: 12px !important;
   }
 
-  .dashboard-container .status-card {
-    min-height: 80px !important;
-    padding: 12px 10px !important;
-  }
-
-  .dashboard-container .status-card h3 {
-    font-size: 24px !important;
-  }
-
-  /* Settings Grid */
+  /* Settings */
   .dashboard-container .settings-grid {
     grid-template-columns: 1fr !important;
-    gap: 20px !important;
-  }
-
-  /* Buttons */
-  .dashboard-container .btn-primary {
-    width: 100% !important;
-    padding: 12px 20px !important;
-  }
-
-  /* Navigation Sidebar (Mobile Behavior) */
-  .dashboard-container .nav-toggle-btn {
-    width: 40px !important;
-    height: 40px !important;
-    font-size: 18px !important;
   }
 }
