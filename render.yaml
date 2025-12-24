@@ -3,6 +3,10 @@ staticSites:
     rootDirectory: .
     buildCommand: npm install && npm run build
     publishPath: ./dist
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
     envVars:
       - key: NODE_ENV
         value: production
