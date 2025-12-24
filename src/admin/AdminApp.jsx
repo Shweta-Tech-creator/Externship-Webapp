@@ -20,6 +20,9 @@ const AdminApp = () => {
 
   // New state for logo animation
   const [animationDone, setAnimationDone] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  const handleDrawerToggle = () => setMobileOpen(!mobileOpen);
 
   const handleLogin = () => setIsLoggedIn(true);
 
@@ -95,7 +98,12 @@ const AdminApp = () => {
       <CssBaseline />
       {isLoggedIn ? (
         <Box sx={{ display: "flex" }}>
-          <Sidebar onNavigate={setCurrentPage} darkMode={darkMode} />
+          <Sidebar
+            onNavigate={setCurrentPage}
+            darkMode={darkMode}
+            mobileOpen={mobileOpen}
+            onClose={() => setMobileOpen(false)}
+          />
 
           <Box
             sx={{
@@ -108,7 +116,12 @@ const AdminApp = () => {
               backgroundColor: theme.palette.background.default,
             }}
           >
-            <Navbar darkMode={darkMode} toggleDarkMode={toggleDarkMode} onLogout={handleLogout} />
+            <Navbar
+              darkMode={darkMode}
+              toggleDarkMode={toggleDarkMode}
+              onLogout={handleLogout}
+              onDrawerToggle={handleDrawerToggle}
+            />
             <Box sx={{ width: "100%", p: { xs: 1, sm: 2, md: 2.5 } }}>
               {renderPage()}
             </Box>

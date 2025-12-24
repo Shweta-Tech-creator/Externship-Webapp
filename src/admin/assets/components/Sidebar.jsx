@@ -24,10 +24,9 @@ import {
   Avatar,
 } from "@mui/material";
 
-const Sidebar = ({ onNavigate }) => {
+const Sidebar = ({ onNavigate, mobileOpen, onClose }) => {
   const [active, setActive] = useState("dashboard");
-  const [mobileOpen, setMobileOpen] = useState(false);
-  
+
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
@@ -36,6 +35,7 @@ const Sidebar = ({ onNavigate }) => {
     { label: "Internships", page: "internships", icon: <Work />, color: "#a78bfa" },
     { label: "Applications", page: "applications", icon: <People />, color: "#34d399" },
     { label: "Attendance", page: "attendance", icon: <CalendarMonth />, color: "#fbbf24" },
+    { label: "Users", page: "users", icon: <People />, color: "#38bdf8" },
   ];
 
   const bottomItems = [
@@ -46,7 +46,7 @@ const Sidebar = ({ onNavigate }) => {
     setActive(page);
     onNavigate(page);
     if (isMobile) {
-      setMobileOpen(false);
+      onClose();
     }
   };
 
@@ -90,26 +90,10 @@ const Sidebar = ({ onNavigate }) => {
             textAlign: "center",
           }}
         >
-          <Box
-            // sx={{
-            //   width: 48,
-            //   height: 48,
-            //   mx: "auto",
-            //   mb: 1.5,
-            //   borderRadius: 2,
-            //   background: "linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%)",
-            //   display: "flex",
-            //   alignItems: "center",
-            //   justifyContent: "center",
-            //   boxShadow: "0 8px 24px rgba(59, 130, 246, 0.4)",
-            // }}
-          >
-            {/* <Dashboard sx={{ fontSize: 28, color: "#fff" }} /> */}
-          </Box>
           <Typography
             variant="h6"
             fontWeight={800}
-            sx={{ 
+            sx={{
               letterSpacing: 0.5,
               background: "#fff",
               backgroundClip: "text",
@@ -142,7 +126,7 @@ const Sidebar = ({ onNavigate }) => {
                   backgroundColor: isActive
                     ? "rgba(59, 130, 246, 0.15)"
                     : "transparent",
-                  border: isActive 
+                  border: isActive
                     ? "1px solid rgba(96, 165, 250, 0.3)"
                     : "1px solid transparent",
                   "&::before": isActive ? {
@@ -163,7 +147,7 @@ const Sidebar = ({ onNavigate }) => {
                 }}
               >
                 <ListItemIcon
-                  sx={{ 
+                  sx={{
                     color: isActive ? item.color : "rgba(255,255,255,0.7)",
                     minWidth: "40px",
                     transition: "all 0.3s ease",
@@ -185,7 +169,7 @@ const Sidebar = ({ onNavigate }) => {
                     </Typography>
                   }
                 />
-                
+
                 {isActive && (
                   <Box
                     sx={{
@@ -205,14 +189,14 @@ const Sidebar = ({ onNavigate }) => {
 
       {/* Bottom Section */}
       <Box sx={{ mt: 2, position: "relative", zIndex: 1 }}>
-        <Divider 
-          sx={{ 
-            borderColor: "rgba(255,255,255,0.15)", 
+        <Divider
+          sx={{
+            borderColor: "rgba(255,255,255,0.15)",
             mb: 2,
             "&::before, &::after": {
               borderColor: "rgba(255,255,255,0.15)",
             },
-          }} 
+          }}
         />
 
         <List sx={{ padding: 0 }}>
@@ -233,7 +217,7 @@ const Sidebar = ({ onNavigate }) => {
                   backgroundColor: isActive
                     ? "rgba(59, 130, 246, 0.15)"
                     : "transparent",
-                  border: isActive 
+                  border: isActive
                     ? "1px solid rgba(96, 165, 250, 0.3)"
                     : "1px solid transparent",
                   "&::before": isActive ? {
@@ -254,7 +238,7 @@ const Sidebar = ({ onNavigate }) => {
                 }}
               >
                 <ListItemIcon
-                  sx={{ 
+                  sx={{
                     color: isActive ? item.color : "rgba(255,255,255,0.7)",
                     minWidth: "40px",
                     transition: "all 0.3s ease",
@@ -276,7 +260,7 @@ const Sidebar = ({ onNavigate }) => {
                     </Typography>
                   }
                 />
-                
+
                 {isActive && (
                   <Box
                     sx={{
@@ -298,29 +282,6 @@ const Sidebar = ({ onNavigate }) => {
 
   return (
     <>
-      {/* Mobile Menu Button */}
-      {isMobile && (
-        <IconButton
-          onClick={() => setMobileOpen(true)}
-          sx={{
-            position: "fixed",
-            top: 16,
-            left: 16,
-            zIndex: 1300,
-            background: "linear-gradient(135deg, #1e40af 0%, #7c3aed 100%)",
-            color: "white",
-            boxShadow: "0 4px 14px rgba(59, 130, 246, 0.4)",
-            "&:hover": {
-              background: "linear-gradient(135deg, #1e3a8a 0%, #6d28d9 100%)",
-              transform: "scale(1.05)",
-            },
-            transition: "all 0.3s ease",
-          }}
-        >
-          <MenuIcon />
-        </IconButton>
-      )}
-
       {/* Desktop Sidebar */}
       {!isMobile && (
         <Box
@@ -340,7 +301,7 @@ const Sidebar = ({ onNavigate }) => {
       <Drawer
         anchor="left"
         open={mobileOpen}
-        onClose={() => setMobileOpen(false)}
+        onClose={onClose}
         sx={{
           display: { xs: "block", md: "none" },
           "& .MuiDrawer-paper": {
@@ -354,7 +315,7 @@ const Sidebar = ({ onNavigate }) => {
         {/* Close button for mobile */}
         <Box sx={{ position: "absolute", top: 16, right: 16, zIndex: 2 }}>
           <IconButton
-            onClick={() => setMobileOpen(false)}
+            onClick={onClose}
             sx={{
               color: "rgba(255,255,255,0.7)",
               "&:hover": {
