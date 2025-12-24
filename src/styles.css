@@ -1775,20 +1775,33 @@ body {
   .about-images {
     min-height: auto;
     height: auto;
-    padding-bottom: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    padding-bottom: 20px;
   }
 
   .about-img-primary {
-    width: 70vw;
-    max-width: 360px;
-    height: 52vw;
-    max-height: 420px;
+    width: 90vw !important;
+    max-width: 400px !important;
+    height: 60vw !important;
+    max-height: 280px !important;
+    transform: none !important;
+    opacity: 1 !important;
   }
 
   .about-img-secondary {
-    position: absolute;
-    right: 10%;
-    bottom: -10px;
+    position: relative !important;
+    width: 90vw !important;
+    max-width: 400px !important;
+    height: 60vw !important;
+    max-height: 280px !important;
+    right: auto !important;
+    bottom: auto !important;
+    transform: none !important;
+    opacity: 1 !important;
+    animation-delay: 0s !important;
   }
 
   .about-cta {
