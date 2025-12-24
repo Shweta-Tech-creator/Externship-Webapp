@@ -3050,4 +3050,94 @@
   .dashboard-container .settings-grid {
     grid-template-columns: 1fr !important;
   }
+
+  /* INTERNSHIP HERO VISIBILITY & LAYOUT FIXES */
+  .dashboard-container .internship-hero {
+    grid-template-columns: 1fr !important;
+    min-height: auto !important;
+    padding: 30px 16px !important;
+    gap: 20px !important;
+    text-align: center !important;
+    overflow: visible !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+  }
+
+  .dashboard-container .internship-hero .hero-title {
+    font-size: 28px !important;
+    margin-bottom: 12px !important;
+    line-height: 1.2 !important;
+  }
+
+  .dashboard-container .internship-hero .hero-sub {
+    font-size: 15px !important;
+    margin-bottom: 20px !important;
+    text-align: center !important;
+  }
+
+  .dashboard-container .internship-hero .hero-actions {
+    justify-content: center !important;
+    width: 100% !important;
+  }
+
+  .dashboard-container .internship-hero .hero-actions .apply-btn {
+    width: 100% !important;
+  }
+
+  .dashboard-container .internship-hero .hero-collage {
+    grid-template-columns: 1fr !important;
+    gap: 15px !important;
+    opacity: 1 !important;
+    transform: none !important;
+    animation: none !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    width: 100% !important;
+    margin-top: 20px !important;
+  }
+
+  .dashboard-container .internship-hero .collage-left,
+  .dashboard-container .internship-hero .collage-right {
+    width: 100% !important;
+    min-height: unset !important;
+    padding: 0 !important;
+    transform: none !important;
+  }
+
+  .dashboard-container .internship-hero .collage-img {
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    aspect-ratio: 16/10 !important;
+    transform: none !important;
+    margin: 0 auto !important;
+    display: block !important;
+    opacity: 1 !important;
+    object-fit: cover !important;
+    border-radius: 12px !important;
+  }
+
+  .dashboard-container .internship-hero .collage-img.tall {
+    max-height: 300px !important;
+  }
+
+  /* Search & Filters row */
+  .dashboard-container .search-row {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+    margin-top: 20px !important;
+  }
+
+  .dashboard-container .filters-inline {
+    width: 100% !important;
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 8px !important;
+  }
+
+  .dashboard-container .filters-inline select {
+    width: 100% !important;
+  }
 }
