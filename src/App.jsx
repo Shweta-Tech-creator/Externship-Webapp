@@ -217,14 +217,8 @@ export default function App() {
   }
 
   const handleGoFeatures = () => {
-    if (location.pathname === '/') {
-      scrollToAnchor('why')
-    } else {
-      navigate('/')
-      setTimeout(() => {
-        scrollToAnchor('why')
-      }, 100)
-    }
+    setShowDashboard(true)
+    if (location.pathname !== '/') navigate('/')
   }
 
   // After login success: go straight to dashboard
