@@ -216,6 +216,17 @@ export default function App() {
     }
   }
 
+  const handleGoFeatures = () => {
+    if (location.pathname === '/') {
+      scrollToAnchor('why')
+    } else {
+      navigate('/')
+      setTimeout(() => {
+        scrollToAnchor('why')
+      }, 100)
+    }
+  }
+
   // After login success: go straight to dashboard
   const handleLoginSuccess = (user) => {
     console.log('App: handleLoginSuccess called', user); // Debug Log
@@ -291,7 +302,12 @@ export default function App() {
                     onLogout={handleLogout}
                     user={currentUser}
                   />
-                  <Hero onLogin={() => setShowLogin(true)} onSignup={() => setShowSignup(true)} />
+                  <Hero
+                    onLogin={() => setShowLogin(true)}
+                    onSignup={() => setShowSignup(true)}
+                    isLoggedIn={isLoggedIn}
+                    onGetStarted={handleGoFeatures}
+                  />
                   <Sections onExploreMore={handleExploreMore} />
                   <Footer />
                 </>
