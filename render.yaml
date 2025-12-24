@@ -1,7 +1,8 @@
 staticSites:
   - name: externship-webapp
+    rootDirectory: .
     buildCommand: npm install && npm run build
-    publishPath: dist
+    publishPath: ./dist
     envVars:
       - key: NODE_ENV
         value: production
