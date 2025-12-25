@@ -20,6 +20,21 @@ I have updated the project's environment variables with the new credentials you 
 - I checked the format of the `MONGO_URL` and other keys to ensure they were correctly copied from your message.
 - I ensured the `backend/.env` file exists so the server-side logic can access these settings.
 
+## Final Cleanup
+As per your request, I have **removed the `frontend/` and `backend/` folders** from this repository since you are managing them in separate repos. 
+
+The `Externship-Webapp` repository now contains:
+- `docs/`: Setup guides and walkthroughs.
+- `.gitignore`: Configured to keep your local `.env` files safe.
+
 ## Next Steps
-1. **Restart your servers**: If you have the frontend or backend running, please stop them and run `npm run dev` again in both folders to pick up the new changes.
-2. **Verify Connectivity**: You can check if the database is connecting by looking for the "MongoDB connected" message in your backend console.
+1. **Verify your Repo**: Visit [Shweta-Tech-creator/Externship-Webapp](https://github.com/Shweta-Tech-creator/Externship-Webapp) to see the clean structure.
+## Admin Authentication Changes
+- **Registration Disabled**: The `/api/admin/register` endpoint is now commented out in the backend, and the "Register" option has been removed from the frontend Admin Login page.
+- **Fixed Admin Seeding**: I've added logic to the database connection that automatically creates a default Admin account if one doesn't exist.
+- **Predefined Credentials**: You can now use the following credentials to log in as an Admin:
+    - **Email**: `admin@gmail.com`
+    - **Password**: `admin123`
+
+> [!TIP]
+> You can change these default credentials at any time by updating the `ADMIN_EMAIL` and `ADMIN_PASSWORD` values in your `backend/.env` file and restarting the server.
